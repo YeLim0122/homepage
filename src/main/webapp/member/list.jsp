@@ -65,9 +65,12 @@
 	}
 	
 	function userDel(num) {
-		userF.idx.value = num;
-		userF.action = 'delete.jsp';
-		userF.submit();
+		let yn = window.confirm('정말 삭제할까요?');
+		if (yn) {
+			userF.idx.value = num;
+			userF.action = 'delete.jsp';
+			userF.submit();
+		}	// if -----------------------
 	}
 </script>
 

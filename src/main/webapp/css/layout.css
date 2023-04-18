@@ -41,7 +41,7 @@ header img{
 
 /* nav */
 nav{
-    background-color: rgb(216, 216, 216);
+    background-color: #dfdfdf;
     border-radius: 5px;
     height: 33px;
     padding: 5px;
@@ -241,5 +241,25 @@ span.ck {
 
 input.radio_btn {
 	width: 10%;
-	text-algin: left;
+	text-align: left;
+}
+
+div#loginDiv {
+	width: 60%;
+	margin: auto;
+	font-size: 0.9em;
+}
+
+#loginDiv table {
+	width: 100%;
+	margin: 1em auto;
+}
+
+#loginDiv td {
+	padding: 4px;
+}
+
+#saveId {
+	width: 10%;
+	margin-right: 5px;
 }
