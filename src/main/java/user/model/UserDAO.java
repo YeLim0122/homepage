@@ -31,15 +31,31 @@ public class UserDAO {
 		
 	}	// loginCheck() ------------------------------
 	
-	/** 아이디로 회원정보 가져오는 메소드 */
+	/** 아이디로 회원정보 가져오는 메소드 
+	 * 
+	 * -- system으로 접속해서 multishop에게 view 생성 권한 부여
+		GRANT CREATE VIEW, CREATE SYNONYM TO multishop;
+		-----------------------------------------------
+		-- multishop으로 접속해서 뷰 생성
+		CREATE OR REPLACE VIEW memberView
+		AS
+		SELECT member.*, 
+		decode(mstate, 0, '활동회원', -1, '정지회원', -2, '탈퇴회원', 9, '관리자') mstateStr
+		FROM member
+		WHERE mstate > -2;
+		
+		SELECT * FROM memberView;
+	 * */
 	public UserVO selectUserByUserid(String userid) throws SQLException {
 		try {
 			con = DBUtil.getCon();
 			
-			StringBuilder buf = new StringBuilder("SELECT member.*,")
-					.append(" decode(mstate, 0, '활동회원', -1, '정지회원', -2, '탈퇴회원', 9, '관리자') mstateStr")
-					.append(" FROM member WHERE userid=?");
-			String sql = buf.toString();
+			/*
+			 * StringBuilder buf = new StringBuilder("SELECT member.*,")
+			 * .append(" decode(mstate, 0, '활동회원', -1, '정지회원', -2, '탈퇴회원', 9, '관리자') mstateStr"
+			 * ) .append(" FROM member WHERE userid=?");
+			 */
+			String sql = "SELECT * FROM memberView WHERE userid=?";
 			
 			ps = con.prepareStatement(sql);
 			ps.setString(1, userid);
@@ -190,14 +206,24 @@ public class UserDAO {
 	}	// makeList() ---------------------------------------
 	
 	
-	public int updateUser(UserVO user) throws SQLException {
+	public int updateUser(UserVO user, int mstate) throws SQLException {
 		try {
 			con = DBUtil.getCon();
 			
-			StringBuilder buf = new StringBuilder("UPDATE member")
-					.append(" SET name=?, userid=?, pwd=?, hp1=?, hp2=?, hp3=?, ")
-					.append(" post=?, addr1=?, addr2=?, mstate=?")
-					.append(" WHERE idx=?");
+			StringBuilder buf = null;
+			if (mstate != 9) {	// 일반 회원일 경우
+				buf = new StringBuilder("UPDATE member")
+						.append(" SET name=?, userid=?, hp1=?, hp2=?, hp3=?, ")
+						.append(" post=?, addr1=?, addr2=?, mstate=?, pwd=?")
+						.append(" WHERE idx=?");
+			}
+			else {
+				// 관리자라면 마일리지 수정
+				buf = new StringBuilder("UPDATE member")
+						.append(" SET name=?, userid=?, hp1=?, hp2=?, hp3=?, ")
+						.append(" post=?, addr1=?, addr2=?, mstate=?, mileage=?")
+						.append(" WHERE idx=?"); 
+			}
 			
 			String sql = buf.toString();
 			// System.out.println(sql);	// 디버그용
@@ -205,14 +231,20 @@ public class UserDAO {
 			ps = con.prepareStatement(sql);
 			ps.setString(1, user.getName());
 			ps.setString(2, user.getUserid());
-			ps.setString(3, user.getPwd());
-			ps.setString(4, user.getHp1());
-			ps.setString(5, user.getHp2());
-			ps.setString(6, user.getHp3());
-			ps.setString(7, user.getPost());
-			ps.setString(8, user.getAddr1());
-			ps.setString(9, user.getAddr2());
-			ps.setInt(10, user.getMstate());
+			ps.setString(3, user.getHp1());
+			ps.setString(4, user.getHp2());
+			ps.setString(5, user.getHp3());
+			ps.setString(6, user.getPost());
+			ps.setString(7, user.getAddr1());
+			ps.setString(8, user.getAddr2());
+			ps.setInt(9, user.getMstate());
+			
+			if(mstate != 9) {	// 일반회원일 경우
+				ps.setString(10, user.getPwd());
+			}
+			else {	// 관리자일 경우
+				ps.setInt(10, user.getMileage());
+			}
 			ps.setInt(11, user.getIdx());
 			return ps.executeUpdate();
 			

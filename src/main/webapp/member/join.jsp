@@ -10,6 +10,9 @@
 <div class="container">
 	<h1>회원가입</h1>
 	<form name="form" action="joinEnd.jsp" method="post">
+		<!-- 활동회원: 0, 관리자: 9----------------------------- -->
+		<input type="hidden" name="mode" value="0">
+		<!-- ------------------------------------ -->
 		<table id="userTable" border="1">
 			<tr>
 				<td width="20%" class="m1"><b>이름</b></td>

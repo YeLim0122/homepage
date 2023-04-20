@@ -50,15 +50,16 @@ function id_check() {
 		return; 
 	 }
 	 
+	 // 로그인한 사람이 관리자일 경우는 비번 변경 불가 ==> form.mode.value값으로 체크
 	 // *비밀번호는 문자, 숫자, !, . 포함해서 4~8자리 이내
-	 if (!isPasswd(form.pwd)) {
+	 if (form.mode.value != 9 && !isPasswd(form.pwd)) {
 		 alert('*비밀번호는 문자, 숫자, !, _, . 포함해서 4~8자리 이내이어야 해요!');
 		 form.pwd.select();
 		 return;
 	 }
 	 
 	 // 비번, 비번확인 값 일치 여부 체크
-	 if (form.pwd.value != form.pwd2.value) {
+	 if (form.mode.value != 9 && (form.pwd.value != form.pwd2.value)) {
 		 alert('비밀번호와 비밀번호 확인 값이 달라요!');
 		 form.pwd2.select();
 		 return;

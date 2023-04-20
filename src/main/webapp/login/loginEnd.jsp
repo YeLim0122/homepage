@@ -7,6 +7,12 @@
 	String uid = request.getParameter("userid");
 	String pwd = request.getParameter("pwd");
 	
+	// 아이디 저장 체크박스값 받기
+	String saveId = request.getParameter("saveId");
+	System.out.println("saveId: "+saveId);
+	
+	
+	
 	if (uid==null || pwd==null || uid.trim().isEmpty() || pwd.trim().isEmpty()) {
 		response.sendRedirect("login.jsp");
 		return;
@@ -31,6 +37,21 @@
 		// HttpSession <= request.getSession()
 		session.setAttribute("loginUser", loginUser);
 		
+		Cookie ck = new Cookie("uid", loginUser.getUserid());
+		// 1) saveId에 체크했다면 쿠키를 생성해서 사용자 아이디를 저장하고 유효시간을 1주일 정도 주자
+		if (saveId!=null) {
+			ck.setMaxAge(60*60*24*7);
+		}
+
+		// 2) saveId에 체크 안했다면 => 쿠키 삭제
+		else {
+			ck.setMaxAge(0);
+		}
+		
+		// path설정 "/"
+		// 응답 객체에 쿠키 추가
+		ck.setPath("/");
+		response.addCookie(ck);
 		
 		response.sendRedirect("../main.jsp");
 	}

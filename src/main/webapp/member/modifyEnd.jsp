@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8" import="user.model.*" %>
+    
 <%--
 	0) post방식일 때 한글 처리
 	1) UserVO 빈을 useBean 액션으로 생성 - page scope
@@ -34,6 +35,11 @@
 <jsp:useBean id="userDao" class="user.model.UserDAO" scope="session" />
 
 <%
-	int n = userDao.updateUser(user);
+	UserVO member = (UserVO)session.getAttribute("loginUser");
+	int mstate = 0;
+	if (member != null) {
+		mstate = member.getMstate();	// 로그인한 사람의 회원상태 값
+	}
+	int n = userDao.updateUser(user, mstate);
 	response.sendRedirect("list.jsp");
 %>
